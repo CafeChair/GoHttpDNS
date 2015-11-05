@@ -1,4 +1,5 @@
 package main
+
 import (
 	"github.com/miekg/dns"
 )
@@ -6,19 +7,19 @@ import (
 /*
 第一次获取解析结果,如果redis中没有,则从DNS Server解析
 */
-func resolveFromDns(domain,dnsserver string) ([]string, error) {
+func resolveFromDns(domain string) ([]string, error) {
 	answer := make([]string, 0)
 	m := new(dns.Msg)
-	m.SetQuestion(dns.Fqdn(domain),dns.TypeA)
+	m.SetQuestion(dns.Fqdn(domain), dns.TypeA)
 	c := new(dns.Client)
-	in,_,err := c.Exchange(m,dnsserver + ":53")
+	in, _, err := c.Exchange(m, dnsserver+":53")
 	if err != nil {
 		return answer, err
 	}
 	for _, ain := range in.Answer {
-		if a,ok := ain.(*dns.A);ok {
-			answer = append(answer,a.A.String())
+		if a, ok := ain.(*dns.A); ok {
+			answer = append(answer, a.A.String())
 		}
 	}
-	return answer,nil
+	return answer, nil
 }
