@@ -5,15 +5,10 @@ import (
 )
 
 type Resp struct {
-	Succes int
+	Code   int
 	Domain string
 	IpAddr string
 }
-
-const (
-	SUCC = 0
-	FAIL = 1
-)
 
 func healthHandler(w rest.ResponseWriter, rep *rest.Request) {
 	resp := "I am OK"
@@ -25,7 +20,7 @@ func resolveHandler(w rest.ResponseWriter, req *rest.Request) {
 	ipaddr, err := resolveFromRedis(domain)
 	if err == nil {
 		resp := Resp{
-			Succes: SUCC,
+			Code:   0,
 			Domain: domain,
 			IpAddr: ipaddr,
 		}
@@ -34,19 +29,18 @@ func resolveHandler(w rest.ResponseWriter, req *rest.Request) {
 	ipaddr, errs := resolveFromDNS(domain)
 	if errs != nil {
 		resp := Resp{
-			Succes: FAIL,
+			Code:   1,
 			Domain: domain,
 			IpAddr: "resolve error, maybe this domain has not resolved",
 		}
 		w.WriteJson(&resp)
 	} else {
 		resp := Resp{
-			Succes: SUCC,
+			Code:   0,
 			Domain: domain,
 			IpAddr: ipaddr,
 		}
 		cacheRespToRedis(domain, ipaddr)
 		w.WriteJson(&resp)
 	}
-
 }

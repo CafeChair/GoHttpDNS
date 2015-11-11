@@ -5,7 +5,7 @@ import (
 )
 
 /*
-第一次获取解析结果,如果redis中没有,则从DNS Server解析
+第一次获取解析结果,从redis中获取，如果redis中没有,则从DNS Server解析
 */
 func resolveFromDns(domain string) ([]string, error) {
 	answer := make([]string, 0)
